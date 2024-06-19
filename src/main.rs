@@ -3,6 +3,7 @@ use std::{
     env,
     fs::File,
     io::{self, Read, Write},
+    net::IpAddr,
     os::fd::AsRawFd,
     path::Path,
     thread::sleep,
@@ -103,7 +104,6 @@ fn main() {
         let _ = file.read_to_string(&mut contents);
 
         info!("{}", contents);
-        let ip_re = Regex::new(r"\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b|\b(?:[A-Fa-f0-9]{1,4}:){1,7}[A-Fa-f0-9]{1,4}\b").unwrap();
         let a: Vec<_> = contents
             .split("\n")
             .map(|line| line.trim())
@@ -116,7 +116,13 @@ fn main() {
                 ret.reverse();
                 ret
             })
-            .filter(|v| v.len() == 2 && ip_re.is_match(v[1]))
+            .filter(|v| {
+                v.len() == 2
+                    && match v[1].parse::<IpAddr>() {
+                        Ok(_) => true,
+                        Err(_) => false,
+                    }
+            })
             .map(|v| (v[0], v[1]))
             .collect();
         info!("{:?}", a);
