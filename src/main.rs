@@ -34,10 +34,12 @@ fn daemonize() -> io::Result<()> {
 
     unsafe { libc::setsid() };
 
-    env::set_current_dir("/").map_err(|_| io::Error::new(io::ErrorKind::Other, "Failed to change directory"))?;
+    env::set_current_dir("/")
+        .map_err(|_| io::Error::new(io::ErrorKind::Other, "Failed to change directory"))?;
 
     // Redirect standard file descriptors to /dev/null
-    let null_fd = File::open(Path::new("/dev/null")).map_err(|_| io::Error::new(io::ErrorKind::Other, "Failed to open /dev/null"))?;
+    let null_fd = File::open(Path::new("/dev/null"))
+        .map_err(|_| io::Error::new(io::ErrorKind::Other, "Failed to open /dev/null"))?;
     unsafe {
         libc::dup2(null_fd.as_raw_fd(), libc::STDIN_FILENO);
         libc::dup2(null_fd.as_raw_fd(), libc::STDOUT_FILENO);
@@ -101,6 +103,7 @@ fn main() {
         let _ = file.read_to_string(&mut contents);
 
         info!("{}", contents);
+        let ip_re = Regex::new(r"\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b|\b(?:[A-Fa-f0-9]{1,4}:){1,7}[A-Fa-f0-9]{1,4}\b").unwrap();
         let a: Vec<_> = contents
             .split("\n")
             .map(|line| line.trim())
@@ -113,7 +116,7 @@ fn main() {
                 ret.reverse();
                 ret
             })
-            .filter(|v| v.len() == 2)
+            .filter(|v| v.len() == 2 && ip_re.is_match(v[1]))
             .map(|v| (v[0], v[1]))
             .collect();
         info!("{:?}", a);
