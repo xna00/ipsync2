@@ -2,6 +2,8 @@
 name = "ipsync"
 version = "0.1.0"
 edition = "2021"
+description = "Synchronize IP addresses with email."
+license = "MIT OR Apache-2.0"
 
 [profile.release]
 strip = true
