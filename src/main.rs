@@ -205,6 +205,7 @@ fn main() {
         let file = File::create(path);
         match file {
             Ok(mut file) => {
+                info!("Write to /etc/hosts");
                 let _ = file.write_all(hosts.as_bytes());
             }
             Err(e) => {
