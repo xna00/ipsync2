@@ -208,7 +208,8 @@ fn main() {
             })
             .flatten()
             .collect::<Vec<String>>()
-            .join("\n");
+            .join("\n")
+            + "\n";
         info!("{}", hosts);
 
         let file = File::create(path);
