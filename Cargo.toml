@@ -1,6 +1,6 @@
 [package]
 name = "ipsync"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 description = "Synchronize IP addresses with email."
 license = "MIT OR Apache-2.0"
